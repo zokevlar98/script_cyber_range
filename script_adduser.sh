@@ -38,5 +38,19 @@ for USERNAME in "${USERNAMES[@]}"; do
     useradd -m -G "$GROUP_NAME" -s /bin/bash "$USERNAME"
     echo "$USERNAME:$PASSWORD" | chpasswd
     echo "User $USERNAME created and added to group $GROUP_NAME with password $PASSWORD."
+
+    # Allow password authentication for SSH
+    mkdir -p /home/$USERNAME/.ssh
+    chown $USERNAME:$USERNAME /home/$USERNAME/.ssh
+    chmod 700 /home/$USERNAME/.ssh
   fi
 done
+
+# Enable password authentication in SSH configuration
+sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+
+# Restart SSH service to apply changes
+systemctl restart sshd
+
+echo "All users created and SSH configured to allow password authentication."
