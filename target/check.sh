@@ -10,17 +10,17 @@ sudo ufw disable
 
 # Verify installation of all tools
 echo "Verifying installed tools..."
-dpkg -l | grep -E 'apache2|php7.4|mysql-server|vsftpd|samba'
+dpkg -l | grep -E 'apache2|mysql-server|vsftpd|samba'
 
 # Check open ports and echo results
 echo "Checking open ports on the system..."
 open_ports=$(netstat -tuln | grep LISTEN)
-echo "Open ports on the system:"
-echo "$open_ports"
-
-# Display open ports
-echo "Displaying open ports..."
-echo "$open_ports"
+if [ -z "$open_ports" ]; then
+    echo "No open ports found."
+else
+    echo "Open ports on the system:"
+    echo "$open_ports"
+fi
 
 # Restart Apache (if needed)
 echo "Restarting Apache..."
