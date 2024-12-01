@@ -1,31 +1,38 @@
 #!/bin/bash
 
-# Disable automatic updates
-echo "Disabling automatic updates..."
-sudo systemctl disable apt-daily.service apt-daily-upgrade.service
+# List of dependencies to check
+dependencies=(
+  "build-essential"
+  "python3-pip"
+  "python3-dev"
+  "git"
+  "curl"
+  "wget"
+  "tar"
+  "python3-venv"
+  "libssl-dev"
+  "libffi-dev"
+  "openssh-client"
+  "openssh-server"
+  "openssl"
+  "jq"
+  "apache2"
+  "php7.4"
+  "libapache2-mod-php7.4"
+  "vsftpd"
+  "samba"
+)
 
-# Turn off UFW (firewall)
-echo "Turning off UFW (firewall)..."
-sudo ufw disable
+# Function to check if a package is installed
+check_package() {
+  dpkg -l | grep -qw "$1"
+}
 
-# Verify installation of all tools
-echo "Verifying installed tools..."
-dpkg -l | grep -E 'apache2|mysql-server|vsftpd|samba'
-
-# Check open ports and echo results
-echo "Checking open ports on the system..."
-open_ports=$(netstat -tuln | grep LISTEN)
-if [ -z "$open_ports" ]; then
-    echo "No open ports found."
-else
-    echo "Open ports on the system:"
-    echo "$open_ports"
-fi
-
-# Restart Apache (if needed)
-echo "Restarting Apache..."
-sudo systemctl restart apache2
-
-# Restart SSH (if needed)
-echo "Restarting SSH..."
-sudo systemctl restart ssh
+# Check each dependency
+for package in "${dependencies[@]}"; do
+  if check_package "$package"; then
+    echo "Package $package is installed."
+  else
+    echo "Package $package is NOT installed."
+  fi
+done
