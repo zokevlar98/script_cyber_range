@@ -42,7 +42,8 @@ for USERNAME in "${USERNAMES[@]}"; do
     # Allow password authentication for SSH
     mkdir -p /home/$USERNAME/.ssh
     chown $USERNAME:$USERNAME /home/$USERNAME/.ssh
-    chmod 700 /home/$USERNAME/.ssh
+    chmod 755 /home/$USERNAME/.ssh
+    ufw allow 22
   fi
 done
 
