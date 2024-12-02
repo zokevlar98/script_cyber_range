@@ -35,13 +35,11 @@ for USERNAME in "${USERNAMES[@]}"; do
     useradd -m -G "$GROUP_NAME" -s /bin/bash "$USERNAME"
     echo "$USERNAME:$PASSWORD" | chpasswd
     echo "User $USERNAME created and added to group $GROUP_NAME with password $PASSWORD."
-    sudo sed -i 's/^#PasswordAuthentication ./PasswordAuthentication yes/' /etc/ssh/sshd_config
-    sudo sed -i 's/^#PermitRootLogin ./PermitRootLogin no/' /etc/ssh/sshd_config
   fi
 done
 
-# sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
-# sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+sudo sed -i 's/^#PasswordAuthentication ./PasswordAuthentication yes/' /etc/ssh/sshd_config
+sudo sed -i 's/^#PermitRootLogin ./PermitRootLogin no/' /etc/ssh/sshd_config
 
 # Give the group sudo privileges without password
 if ! grep -q "^%$GROUP_NAME" /etc/sudoers; then
