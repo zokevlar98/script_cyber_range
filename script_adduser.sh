@@ -20,7 +20,7 @@ GROUP_NAME="IRIC3"
 
 # Create group if not exists
 if ! getent group "$GROUP_NAME" > /dev/null 2>&1; then
-  groupadd "$GROUP_NAME"
+  sudo groupadd "$GROUP_NAME"
   echo "Group $GROUP_NAME created."
 else
   echo "Group $GROUP_NAME already exists."
@@ -31,7 +31,7 @@ for USERNAME in "${USERNAMES[@]}"; do
   if id "$USERNAME" &>/dev/null; then
     echo "User $USERNAME already exists."
   else
-    useradd -m -G "$GROUP_NAME" -s /bin/bash "$USERNAME"
+    sudo useradd -m -G "$GROUP_NAME" -s /bin/bash "$USERNAME"
     echo "$USERNAME:$PASSWORD" | chpasswd
     echo "User $USERNAME created and added to group $GROUP_NAME with password $PASSWORD."
   fi
@@ -55,7 +55,7 @@ sudo ufw allow 22
 sudo ufw reload
 
 # Restore default SSH configuration if needed
-cat > /etc/ssh/sshd_config <<EOL
+sudo cat > /etc/ssh/sshd_config <<EOL
 # Default SSH configuration
 Port 22
 AddressFamily any
