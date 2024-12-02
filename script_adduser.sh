@@ -37,13 +37,13 @@ for USERNAME in "${USERNAMES[@]}"; do
   fi
 done
 
-# Grant sudo privileges to the group without password
-if ! grep -q "^%$GROUP_NAME" /etc/sudoers; then
-  echo "%$GROUP_NAME ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers 
-  echo "Group $GROUP_NAME granted sudo privileges without password." 
-else
-  echo "Group $GROUP_NAME already has sudo privileges." 
-fi
+# # Grant sudo privileges to the group without password
+# if ! grep -q "^%$GROUP_NAME" /etc/sudoers; then
+#   echo "%$GROUP_NAME ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers 
+#   echo "Group $GROUP_NAME granted sudo privileges without password." 
+# else
+#   echo "Group $GROUP_NAME already has sudo privileges." 
+# fi
 
 # Restart SSH service
 echo "Restarting SSH service..." 
