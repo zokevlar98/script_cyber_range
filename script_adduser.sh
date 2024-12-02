@@ -78,7 +78,6 @@ EOL
   else
     echo "Error in SSH configuration syntax. Please review."
   fi
-fi
 
 sudo systemctl restart sshd
 
