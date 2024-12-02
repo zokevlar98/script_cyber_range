@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Variables
 USERNAMES=(
   "user1" "user2" "user3" "user4" "user5"
   "user6" "user7" "user8" "user9" "user10"
@@ -12,12 +13,10 @@ USERNAMES=(
   "user41" "user42" "user43" "user44" "user45"
   "user46" "user47" "user48" "user49" "user50"
 )
-
-# Password for all users
 PASSWORD="cyberrange"
 GROUP_NAME="IRIC3"
 
-# Create the group if it doesn't exist
+# Create group if not exists
 if ! getent group "$GROUP_NAME" > /dev/null 2>&1; then
   groupadd "$GROUP_NAME"
   echo "Group $GROUP_NAME created."
@@ -25,23 +24,18 @@ else
   echo "Group $GROUP_NAME already exists."
 fi
 
-# Create users and assign them to the group
+# Create users and add them to the group
 for USERNAME in "${USERNAMES[@]}"; do
-  # Check if the user already exists
   if id "$USERNAME" &>/dev/null; then
     echo "User $USERNAME already exists."
   else
-    # Create the user with the specified password and add to the group
     useradd -m -G "$GROUP_NAME" -s /bin/bash "$USERNAME"
     echo "$USERNAME:$PASSWORD" | chpasswd
     echo "User $USERNAME created and added to group $GROUP_NAME with password $PASSWORD."
   fi
 done
 
-sudo sed -i 's/^#PasswordAuthentication ./PasswordAuthentication yes/' /etc/ssh/sshd_config
-sudo sed -i 's/^#PermitRootLogin ./PermitRootLogin no/' /etc/ssh/sshd_config
-
-# Give the group sudo privileges without password
+# Grant sudo privileges to the group without password
 if ! grep -q "^%$GROUP_NAME" /etc/sudoers; then
   echo "%$GROUP_NAME ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
   echo "Group $GROUP_NAME granted sudo privileges without password."
@@ -49,4 +43,49 @@ else
   echo "Group $GROUP_NAME already has sudo privileges."
 fi
 
-systemctl restart sshd
+# Restart SSH service
+echo "Restarting SSH service..."
+sudo systemctl restart sshd
+
+# Open SSH port in firewall
+echo "Configuring firewall..."
+sudo ufw allow 22
+sudo ufw reload
+
+# Restore default SSH configuration if needed
+read -p "Do you want to restore the default SSH configuration? (y/n): " RESTORE_CONFIG
+if [[ "$RESTORE_CONFIG" == "y" || "$RESTORE_CONFIG" == "Y" ]]; then
+  echo "Replace default SSH configuration with ower... "
+  cat > /etc/ssh/sshd_config <<EOL
+# Default SSH configuration
+Port 22
+AddressFamily any
+ListenAddress 0.0.0.0
+ListenAddress ::
+PermitRootLogin prohibit-password
+PubkeyAuthentication yes
+PasswordAuthentication yes
+ChallengeResponseAuthentication no
+UsePAM yes
+X11Forwarding yes
+PrintMotd no
+AcceptEnv LANG LC_*
+Subsystem sftp /usr/lib/openssh/sftp-server
+EOL
+  sudo sshd -t
+  if [ $? -eq 0 ]; then
+    sudo systemctl restart sshd
+    echo "Default SSH configuration restored and service restarted."
+  else
+    echo "Error in SSH configuration syntax. Please review."
+  fi
+fi
+
+sudo systemctl restart sshd
+
+# Open SSH port in firewall
+echo "Configuring firewall..."
+sudo ufw allow 22
+sudo ufw reload
+
+echo "Script execution completed."
