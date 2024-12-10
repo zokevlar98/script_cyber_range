@@ -12,7 +12,7 @@ USERNAMES=(
   "NAJEM" "OUNAIM" "PEZONGO" "QOURI" "RACHDA"
   "SADANI" "SARSAR" "SAYAH" "TAHIRI_ALAOUI" "TALIBI"
   "TARIK" "TEMRAOUI" "TOUBI" "WADDAY" "WATIK"
-  "ZAAKOUR" "ZAARAOUI"
+  "ZAAKOUR" "ZAARAOUI" "MALEH"
 )
 
 PASSWORD="cyberrange"
@@ -47,11 +47,16 @@ done
 
 # Grant sudo privileges to the group without password in same
 if ! grep -q "^%$GROUP_NAME" /etc/sudoers; then
-  echo "%$GROUP_NAME ALL=(ALL) NOPASSWD:/usr,/tmp,/bin,/opt,/snap/bin/pwsh" | sudo tee -a /etc/sudoers 
+  echo "%$GROUP_NAME ALL=(ALL) NOPASSWD:/usr,/tmp,/bin,/opt,/snap/bin/pwsh,/usr/bin/snap" | sudo tee -a /etc/sudoers 
   echo "Group $GROUP_NAME granted sudo privileges without password." 
 else
   echo "Group $GROUP_NAME already has sudo privileges." 
 fi
+
+echo "QOURI ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+echo "ZAARAOUI ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+echo "HBILATE ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+echo "FARKH ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
 
 # Restart SSH service
 echo "Restarting SSH service..." 
