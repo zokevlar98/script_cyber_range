@@ -47,7 +47,7 @@ done
 
 # Grant sudo privileges to the group without password in same
 if ! grep -q "^%$GROUP_NAME" /etc/sudoers; then
-  echo "%$GROUP_NAME ALL=(ALL) NOPASSWD:/usr,/tmp,/bin,/opt" | sudo tee -a /etc/sudoers 
+  echo "%$GROUP_NAME ALL=(ALL) NOPASSWD:/usr,/tmp,/bin,/opt,/snap/bin/pwsh" | sudo tee -a /etc/sudoers 
   echo "Group $GROUP_NAME granted sudo privileges without password." 
 else
   echo "Group $GROUP_NAME already has sudo privileges." 
