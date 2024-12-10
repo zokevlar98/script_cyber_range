@@ -58,6 +58,8 @@ echo "ZAARAOUI ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
 echo "HBILATE ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
 echo "FARKH ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
 
+snap install metasploit-framework
+
 # Restart SSH service
 echo "Restarting SSH service..." 
 sudo systemctl restart sshd 
